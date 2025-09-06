@@ -16,9 +16,6 @@
     "default_title": "Convert Notion Equations",
     "default_icon": "icon.png"
   },
-  "icons": {
-    "icon": "icon.png"
-  },
   "author": "David Wong",
   "homepage_url": "https://github.com/davidwkk/notion-equation-converter"
 }
