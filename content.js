@@ -1,15 +1,91 @@
-// Listen for messages from popup
+// State
+let autoConvertEnabled = false;
+let isConverting = false;
+let mutationObserver = null;
+
+// Message listener from popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "convertEquations") {
     const count = convertTextEquations();
-    sendResponse({ success: true, count: count });
+    sendResponse({ success: true, count });
+  } else if (request.action === "setAutoConvert") {
+    setAutoConvert(request.enabled);
+  }
+  // Return true only if async response is planned (not needed here)
+});
+
+// Initialize preference from storage
+chrome.storage.local.get({ autoConvertEnabled: false }, (res) => {
+  autoConvertEnabled = res.autoConvertEnabled;
+  if (autoConvertEnabled) {
+    ensureObserver();
   }
 });
 
+// React to storage changes (if changed in another popup instance)
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === "local" && changes.autoConvertEnabled) {
+    setAutoConvert(changes.autoConvertEnabled.newValue);
+  }
+});
+
+function setAutoConvert(enabled) {
+  autoConvertEnabled = enabled;
+  if (enabled) {
+    ensureObserver();
+  } else {
+    disconnectObserver();
+  }
+}
+
+function ensureObserver() {
+  if (mutationObserver) return;
+  mutationObserver = new MutationObserver(handleMutations);
+  mutationObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+  });
+}
+
+function disconnectObserver() {
+  if (mutationObserver) {
+    mutationObserver.disconnect();
+    mutationObserver = null;
+  }
+}
+
+function handleMutations(mutations) {
+  if (!autoConvertEnabled) return;
+  if (isConverting) return;
+
+  for (const mutation of mutations) {
+    if (mutation.type === "characterData") {
+      convertSingleTextNode(mutation.target);
+    } else if (mutation.type === "childList") {
+      mutation.addedNodes.forEach((node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          convertSingleTextNode(node);
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const walker = document.createTreeWalker(
+            node,
+            NodeFilter.SHOW_TEXT,
+            null,
+            false
+          );
+          let tn;
+          while ((tn = walker.nextNode())) {
+            convertSingleTextNode(tn);
+          }
+        }
+      });
+    }
+  }
+}
+
+// Manual batch conversion
 function convertTextEquations() {
   let count = 0;
-
-  // Find all text nodes in the document
   const walker = document.createTreeWalker(
     document.body,
     NodeFilter.SHOW_TEXT,
@@ -17,114 +93,47 @@ function convertTextEquations() {
     false
   );
 
-  const textNodes = [];
+  const candidates = [];
   let node;
   while ((node = walker.nextNode())) {
-    // Only process text nodes that contain our pattern
     if (node.textContent.includes("\\[") && node.textContent.includes("\\]")) {
-      textNodes.push(node);
+      candidates.push(node);
     }
   }
 
-  // Process each text node
-  textNodes.forEach((textNode) => {
-    const originalText = textNode.textContent;
-    const newText = originalText.replace(/\\\[(.*?)\\\]/g, "$$$1$");
-
-    if (newText !== originalText) {
-      textNode.textContent = newText;
-      count += (originalText.match(/\\\[/g) || []).length;
-
-      // Trigger input event to notify Notion of the change
-      const parent = textNode.parentElement;
-      if (parent) {
-        const inputEvent = new Event("input", {
-          bubbles: true,
-          cancelable: true,
-        });
-        parent.dispatchEvent(inputEvent);
-      }
+  candidates.forEach((textNode) => {
+    const original = textNode.textContent;
+    const updated = original.replace(/\\\[(.*?)\\\]/g, "$$$1$");
+    if (updated !== original) {
+      textNode.textContent = updated;
+      count += (original.match(/\\\[/g) || []).length;
+      notifyInput(textNode.parentElement);
     }
   });
 
   return count;
 }
 
-// Optional: Real-time conversion as you type
-let isConverting = false;
-
-function setupAutoConversion() {
-  const observer = new MutationObserver((mutations) => {
-    if (isConverting) return; // Prevent infinite loops
-
-    mutations.forEach((mutation) => {
-      if (mutation.type === "characterData" || mutation.type === "childList") {
-        mutation.addedNodes.forEach((node) => {
-          if (node.nodeType === Node.TEXT_NODE) {
-            convertSingleTextNode(node);
-          } else if (node.nodeType === Node.ELEMENT_NODE) {
-            // Check text nodes within the added element
-            const walker = document.createTreeWalker(
-              node,
-              NodeFilter.SHOW_TEXT,
-              null,
-              false
-            );
-
-            let textNode;
-            while ((textNode = walker.nextNode())) {
-              convertSingleTextNode(textNode);
-            }
-          }
-        });
-
-        // Also check modified text nodes
-        if (mutation.target.nodeType === Node.TEXT_NODE) {
-          convertSingleTextNode(mutation.target);
-        }
-      }
-    });
-  });
-
-  // Start observing
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-    characterData: true,
-  });
-}
-
+// Single node conversion (auto mode)
 function convertSingleTextNode(textNode) {
   if (isConverting) return;
-
   const text = textNode.textContent;
-  if (text.includes("\\[") && text.includes("\\]")) {
-    isConverting = true;
+  if (!text || !text.includes("\\[") || !text.includes("\\]")) return;
 
-    const newText = text.replace(/\\\[(.*?)\\\]/g, "$$$1$");
-    if (newText !== text) {
-      textNode.textContent = newText;
+  const newText = text.replace(/\\\[(.*?)\\\]/g, "$$$1$");
+  if (newText === text) return;
 
-      // Notify Notion of the change
-      const parent = textNode.parentElement;
-      if (parent) {
-        const inputEvent = new Event("input", {
-          bubbles: true,
-          cancelable: true,
-        });
-        parent.dispatchEvent(inputEvent);
-      }
-    }
+  isConverting = true;
+  textNode.textContent = newText;
+  notifyInput(textNode.parentElement);
 
-    setTimeout(() => {
-      isConverting = false;
-    }, 100);
-  }
+  setTimeout(() => {
+    isConverting = false;
+  }, 50);
 }
 
-// Initialize auto-conversion when page loads
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", setupAutoConversion);
-} else {
-  setupAutoConversion();
+function notifyInput(parent) {
+  if (!parent) return;
+  const evt = new Event("input", { bubbles: true, cancelable: true });
+  parent.dispatchEvent(evt);
 }

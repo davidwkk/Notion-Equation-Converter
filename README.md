@@ -110,6 +110,7 @@ cd notion-equation-converter
 - Initial release
 - Basic equation conversion functionality
 - Chrome extension popup interface
+- Auto-Convert Toggle
 
 ## 🐛 Issues & Support
 
