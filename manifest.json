@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Notion Equation Converter",
+  "version": "1.0",
+  "description": "Convert block equations to inline equations in Notion",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://*.notion.so/*", "*://*.notion.site/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Convert Notion Equations"
+  }
+}

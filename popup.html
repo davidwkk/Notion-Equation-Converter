@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        width: 250px;
+        padding: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      .button {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        background-color: #2eaadc;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .button:hover {
+        background-color: #2b9bc7;
+      }
+      .status {
+        margin-top: 10px;
+        padding: 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        text-align: center;
+      }
+      .success {
+        background-color: #e8f5e8;
+        color: #2d5a2d;
+      }
+      .error {
+        background-color: #ffeaea;
+        color: #d63031;
+      }
+      .info {
+        background-color: #e8f4fd;
+        color: #2d5aa0;
+      }
+      h3 {
+        margin: 0 0 15px 0;
+        color: #37352f;
+      }
+      .example {
+        margin-top: 10px;
+        padding: 8px;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        font-size: 11px;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Notion Equation Converter</h3>
+    <button id="convertBtn" class="button">Convert \[ \] to $ $</button>
+    <div id="status"></div>
+    <div class="example">
+      Example:<br />
+      <code>\[x^2 + y^2 = z^2\]</code><br />
+      becomes<br />
+      <code>$x^2 + y^2 = z^2$</code>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
