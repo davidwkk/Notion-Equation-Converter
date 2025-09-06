@@ -1,6 +1,6 @@
 # Notion Equation Converter
 
-A Chrome extension that converts LaTeX block equations `\[ \]` to inline equations `$ $` in Notion pages.
+A Chrome extension that converts LaTeX block equations `\[ \]` to inline equations (unrendered) `$ $` in Notion pages.
 
 ![Demo](screenshots/demo.gif)
 
@@ -45,11 +45,14 @@ The quadratic formula is \[x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}\]
 
 3. Click the extension icon in your toolbar
 4. Click "Convert \[ \] to $ $"
-5. Your equations are now inline:
+5. Your equations are now in **inline syntax**:
 
 ```
 The quadratic formula is $x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}$
 ```
+
+6. Manually select the equation from and use shortcut to make it rendered.
+   - Shortcut: `ctrl/cmd + shift + E`
 
 ### Before & After
 
@@ -91,9 +94,18 @@ cd notion-equation-converter
 # Go to chrome://extensions/, enable Developer mode, click "Load unpacked"
 ```
 
+## 🚀 Future Development Plan
+
+### Auto-Rendering Feature
+
+- **Goal**: Automatically render equations after conversion from `\[ \]` to `$ $`
+- **Current State**: Users need to manually select and use `ctrl/cmd + shift + E` to render
+- **Target**: Eliminate manual rendering step for seamless equation conversion
+- **Technical Challenge**: Automatically trigger Notion's equation rendering after conversion
+
 ## 📝 Changelog
 
-### Version 1.0.0 (2025-09-06)
+### Version 1.0 (2025-09-06)
 
 - Initial release
 - Basic equation conversion functionality
