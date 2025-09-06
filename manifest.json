@@ -1,12 +1,9 @@
 {
-  "manifest_version": 3,
   "name": "Notion Equation Converter",
+  "description": "Convert LaTeX block equations \\[ \\] to inline equations $ $ in Notion pages",
   "version": "1.0",
-  "description": "Convert block equations to inline equations in Notion",
-  "permissions": [
-    "activeTab",
-    "scripting"
-  ],
+  "manifest_version": 3,
+  "permissions": ["activeTab", "scripting"],
   "content_scripts": [
     {
       "matches": ["*://*.notion.so/*", "*://*.notion.site/*"],
@@ -16,6 +13,12 @@
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Convert Notion Equations"
-  }
+    "default_title": "Convert Notion Equations",
+    "default_icon": "icon.png"
+  },
+  "icons": {
+    "icon": "icon.png"
+  },
+  "author": "David Wong",
+  "homepage_url": "https://github.com/davidwkk/notion-equation-converter"
 }
