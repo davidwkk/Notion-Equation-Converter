@@ -110,7 +110,12 @@ cd notion-equation-converter
 - Initial release
 - Basic equation conversion functionality
 - Chrome extension popup interface
-- Auto-Convert Toggle
+
+### Auto-Convert Toggle (v1.1)
+
+A new toggle in the popup lets you enable/disable real-time auto-conversion.
+Default: OFF (manual one-click conversion only).
+When enabled, any newly typed \\[ ... \\] is immediately changed to $ ... $.
 
 ## 🐛 Issues & Support
 
