@@ -2,12 +2,11 @@
 
 A Chrome extension that converts LaTeX block equations `\[ \]` to inline equations (unrendered) `$ $` in Notion pages.
 
-![Demo](screenshots/demo.gif)
-
 ## 🚀 Features
 
 - **One-click conversion** of all `\[equation\]` patterns to `$equation$`
 - **Real-time auto-conversion** as you type
+- **Smart filtering** - ignores empty brackets `\[\]` or whitespace-only `\[   \]`
 - **Works on all Notion pages** (notion.so and notion.site)
 - **Simple and lightweight** - no permissions beyond active tab
 - **Preserves equation content** - only changes the delimiters
@@ -51,8 +50,12 @@ The quadratic formula is \[x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}\]
 The quadratic formula is $x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}$
 ```
 
-6. Manually select the equation from and use shortcut to make it rendered.
+6. Manually select the equation and use shortcut to make it rendered.
    - Shortcut: `ctrl/cmd + shift + E`
+
+### Auto-Convert Mode
+
+Toggle "Auto Convert" in the popup to automatically convert `\[ \]` to `$ $` as you type. Empty brackets like `\[\]` or `\[   \]` are ignored.
 
 ### Before & After
 
@@ -71,9 +74,10 @@ $E = mc^2$
 ## 🛠️ Technical Details
 
 - **Manifest Version:** 3
-- **Permissions:** `activeTab`, `scripting`
+- **Permissions:** `activeTab`, `scripting`, `storage`
 - **Content Scripts:** Runs on `*.notion.so/*` and `*.notion.site/*`
 - **Framework:** Vanilla JavaScript
+- **Regex Pattern:** `/\\\[(\s*\S[\s\S]*?)\\\]/g` - captures content with at least one non-whitespace character
 
 ## 🤝 Contributing
 
@@ -105,7 +109,7 @@ cd notion-equation-converter
 
 ## 📝 Changelog
 
-### Version 1.0 (2025-09-06)
+### Version 1.0
 
 - Initial release
 - Basic equation conversion functionality
@@ -113,9 +117,11 @@ cd notion-equation-converter
 
 ### Auto-Convert Toggle (v1.1)
 
-A new toggle in the popup lets you enable/disable real-time auto-conversion.
-Default: OFF (manual one-click conversion only).
-When enabled, any newly typed \\[ ... \\] is immediately changed to $ ... $.
+- New toggle in the popup for real-time auto-conversion
+- Default: OFF (manual one-click conversion only)
+- When enabled, any newly typed `\[ ... \]` is immediately changed to `$ ... $`
+- **Enhanced regex**: Now ignores empty/whitespace-only brackets for better accuracy
+- **Improved performance**: Better text node filtering and mutation handling
 
 ## 🐛 Issues & Support
 

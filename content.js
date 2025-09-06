@@ -1,9 +1,29 @@
+// Notion Equation Converter Content Script
+// Converts \[ ... \] to $ ... $ only when there is at least one non-whitespace character between the brackets.
+// Empty \[\] or whitespace-only \[   \] are ignored.
+
+// ---------------------------------------------------------------------------
 // State
+// ---------------------------------------------------------------------------
 let autoConvertEnabled = false;
 let isConverting = false;
 let mutationObserver = null;
 
-// Message listener from popup
+// ---------------------------------------------------------------------------
+// Regex
+// ---------------------------------------------------------------------------
+// Captures inner math (with at least one non-whitespace char) across lines, non-greedy
+const EQUATION_REGEX = /\\\[(\s*\S[\s\S]*?)\\\]/g;
+
+// Helper to safely test without leaving lastIndex side-effects
+function hasEquation(text) {
+  EQUATION_REGEX.lastIndex = 0;
+  return EQUATION_REGEX.test(text);
+}
+
+// ---------------------------------------------------------------------------
+// Message Listener (from popup)
+// ---------------------------------------------------------------------------
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "convertEquations") {
     const count = convertTextEquations();
@@ -11,31 +31,29 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   } else if (request.action === "setAutoConvert") {
     setAutoConvert(request.enabled);
   }
-  // Return true only if async response is planned (not needed here)
 });
 
-// Initialize preference from storage
+// ---------------------------------------------------------------------------
+// Initialization
+// ---------------------------------------------------------------------------
 chrome.storage.local.get({ autoConvertEnabled: false }, (res) => {
   autoConvertEnabled = res.autoConvertEnabled;
-  if (autoConvertEnabled) {
-    ensureObserver();
-  }
+  if (autoConvertEnabled) ensureObserver();
 });
 
-// React to storage changes (if changed in another popup instance)
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === "local" && changes.autoConvertEnabled) {
     setAutoConvert(changes.autoConvertEnabled.newValue);
   }
 });
 
+// ---------------------------------------------------------------------------
+// Auto-convert Toggle Handling
+// ---------------------------------------------------------------------------
 function setAutoConvert(enabled) {
   autoConvertEnabled = enabled;
-  if (enabled) {
-    ensureObserver();
-  } else {
-    disconnectObserver();
-  }
+  if (enabled) ensureObserver();
+  else disconnectObserver();
 }
 
 function ensureObserver() {
@@ -55,9 +73,11 @@ function disconnectObserver() {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Mutation Handling (Auto Mode)
+// ---------------------------------------------------------------------------
 function handleMutations(mutations) {
-  if (!autoConvertEnabled) return;
-  if (isConverting) return;
+  if (!autoConvertEnabled || isConverting) return;
 
   for (const mutation of mutations) {
     if (mutation.type === "characterData") {
@@ -83,9 +103,12 @@ function handleMutations(mutations) {
   }
 }
 
-// Manual batch conversion
+// ---------------------------------------------------------------------------
+// Manual Batch Conversion
+// ---------------------------------------------------------------------------
 function convertTextEquations() {
-  let count = 0;
+  let totalConverted = 0;
+
   const walker = document.createTreeWalker(
     document.body,
     NodeFilter.SHOW_TEXT,
@@ -96,31 +119,46 @@ function convertTextEquations() {
   const candidates = [];
   let node;
   while ((node = walker.nextNode())) {
-    if (node.textContent.includes("\\[") && node.textContent.includes("\\]")) {
+    const txt = node.textContent;
+    if (txt && txt.includes("\\[") && txt.includes("\\]")) {
       candidates.push(node);
     }
   }
 
   candidates.forEach((textNode) => {
     const original = textNode.textContent;
-    const updated = original.replace(/\\\[(.*?)\\\]/g, "$$$1$");
+    if (!original) return;
+
+    EQUATION_REGEX.lastIndex = 0;
+    const matches = [...original.matchAll(EQUATION_REGEX)];
+    if (matches.length === 0) return;
+
+    // Replace \[ ... \] with $ ... $
+    EQUATION_REGEX.lastIndex = 0;
+    const updated = original.replace(EQUATION_REGEX, "$$$1$");
+
     if (updated !== original) {
       textNode.textContent = updated;
-      count += (original.match(/\\\[/g) || []).length;
+      totalConverted += matches.length;
       notifyInput(textNode.parentElement);
     }
   });
 
-  return count;
+  return totalConverted;
 }
 
-// Single node conversion (auto mode)
+// ---------------------------------------------------------------------------
+// Single Node Conversion (Auto Mode)
+// ---------------------------------------------------------------------------
 function convertSingleTextNode(textNode) {
   if (isConverting) return;
   const text = textNode.textContent;
-  if (!text || !text.includes("\\[") || !text.includes("\\]")) return;
+  if (!text) return;
+  if (!text.includes("\\[") || !text.includes("\\]")) return;
+  if (!hasEquation(text)) return;
 
-  const newText = text.replace(/\\\[(.*?)\\\]/g, "$$$1$");
+  EQUATION_REGEX.lastIndex = 0;
+  const newText = text.replace(EQUATION_REGEX, "$$$1$");
   if (newText === text) return;
 
   isConverting = true;
@@ -132,6 +170,9 @@ function convertSingleTextNode(textNode) {
   }, 50);
 }
 
+// ---------------------------------------------------------------------------
+// Utility
+// ---------------------------------------------------------------------------
 function notifyInput(parent) {
   if (!parent) return;
   const evt = new Event("input", { bubbles: true, cancelable: true });
