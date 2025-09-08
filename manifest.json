@@ -1,9 +1,9 @@
 {
   "name": "Notion Equation Converter",
   "description": "Convert LaTeX block equations \\[ \\] to inline equations $ $ in Notion pages",
-  "version": "1.1",
+  "version": "1.2",
   "manifest_version": 3,
-  "permissions": ["activeTab", "scripting", "storage"],
+  "permissions": ["activeTab", "storage"],
   "content_scripts": [
     {
       "matches": ["*://*.notion.so/*", "*://*.notion.site/*"],

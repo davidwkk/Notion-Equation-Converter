@@ -74,7 +74,7 @@ $E = mc^2$
 ## 🛠️ Technical Details
 
 - **Manifest Version:** 3
-- **Permissions:** `activeTab`, `scripting`, `storage`
+- **Permissions:** `activeTab`, `storage`
 - **Content Scripts:** Runs on `*.notion.so/*` and `*.notion.site/*`
 - **Framework:** Vanilla JavaScript
 - **Regex Pattern:** `/\\\[(\s*\S[\s\S]*?)\\\]/g` - captures content with at least one non-whitespace character
@@ -122,6 +122,12 @@ cd notion-equation-converter
 - When enabled, any newly typed `\[ ... \]` is immediately changed to `$ ... $`
 - **Enhanced regex**: Now ignores empty/whitespace-only brackets for better accuracy
 - **Improved performance**: Better text node filtering and mutation handling
+
+### Security Enhancement (v1.2)
+
+- **Removed unnecessary `scripting` permission** to improve security and privacy
+- **Minimal permissions** now only include `activeTab` and `storage`
+- **Better extension hygiene** by following Chrome Web Store best practices
 
 ## 🐛 Issues & Support
 
