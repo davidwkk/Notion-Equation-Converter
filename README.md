@@ -15,7 +15,7 @@ A Chrome extension that converts LaTeX block equations `\[ \]` to inline equatio
 
 ### From Chrome Web Store
 
-1. Visit the [Chrome Web Store page](link-when-published)
+1. Visit the [Chrome Web Store page](https://chromewebstore.google.com/detail/notion-equation-converter/hbonknccbfmeogcdehnmichghfbmedjj)
 2. Click "Add to Chrome"
 3. Confirm installation
 
