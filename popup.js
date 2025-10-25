@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (count > 0) {
           showStatus(`Converted ${count} equation(s)!`, "success");
         } else {
-          showStatus("No [ ] patterns found", "error");
+          showStatus("No \\[ \\] or \\( \\) patterns found", "error");
         }
       } else {
         showStatus("Conversion failed", "error");

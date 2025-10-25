@@ -1,12 +1,12 @@
 # Notion Equation Converter
 
-A Chrome extension that converts LaTeX block equations `\[ \]` to inline equations (unrendered) `$ $` in Notion pages.
+A Chrome extension that converts LaTeX block equations `\[ \]` and `\( \)` to inline equations (unrendered) `$ $` in Notion pages.
 
 ## 🚀 Features
 
-- **One-click conversion** of all `\[equation\]` patterns to `$equation$`
+- **One-click conversion** of all `\[equation\]` and `\(equation\)` patterns to `$equation$`
 - **Real-time auto-conversion** as you type
-- **Smart filtering** - ignores empty brackets `\[\]` or whitespace-only `\[   \]`
+- **Smart filtering** - ignores empty brackets `\[\]` or `\( \)` and whitespace-only patterns
 - **Works on all Notion pages** (notion.so and notion.site)
 - **Simple and lightweight** - no permissions beyond active tab
 - **Preserves equation content** - only changes the delimiters
@@ -36,18 +36,20 @@ git clone https://github.com/davidwkk/notion-equation-converter.git
 ### Basic Usage
 
 1. Open any Notion page
-2. Type equations using `\[` and `\]`:
+2. Type equations using `\[` and `\]` or `\(` and `\)`:
 
 ```
 The quadratic formula is \[x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}\]
+Einstein's famous equation is \(E = mc^2\)
 ```
 
 3. Click the extension icon in your toolbar
-4. Click "Convert \[ \] to $ $"
+4. Click "Convert \[ \] and \( \) to $ $"
 5. Your equations are now in **inline syntax**:
 
 ```
 The quadratic formula is $x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}$
+Einstein's famous equation is $E = mc^2$
 ```
 
 6. Manually select the equation and use shortcut to make it rendered.
@@ -55,7 +57,7 @@ The quadratic formula is $x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}$
 
 ### Auto-Convert Mode
 
-Toggle "Auto Convert" in the popup to automatically convert `\[ \]` to `$ $` as you type. Empty brackets like `\[\]` or `\[   \]` are ignored.
+Toggle "Auto Convert" in the popup to automatically convert `\[ \]` and `\( \)` to `$ $` as you type. Empty brackets like `\[\]` or `\( \)` are ignored.
 
 ### Before & After
 
@@ -63,12 +65,14 @@ Toggle "Auto Convert" in the popup to automatically convert `\[ \]` to `$ $` as 
 
 ```
 \[E = mc^2\]
+\(F = ma\)
 ```
 
 **After:**
 
 ```
 $E = mc^2$
+$F = ma$
 ```
 
 ## 🛠️ Technical Details
@@ -77,7 +81,7 @@ $E = mc^2$
 - **Permissions:** `activeTab`, `storage`
 - **Content Scripts:** Runs on `*.notion.so/*` and `*.notion.site/*`
 - **Framework:** Vanilla JavaScript
-- **Regex Pattern:** `/\\\[(\s*\S[\s\S]*?)\\\]/g` - captures content with at least one non-whitespace character
+- **Regex Pattern:** `/\\\[(\s*\S[\s\S]*?)\\\]/g` and `/\\\((\s*\S[\s\S]*?)\\\)/g` - captures content with at least one non-whitespace character
 
 ## 🤝 Contributing
 
@@ -128,6 +132,13 @@ cd notion-equation-converter
 - **Removed unnecessary `scripting` permission** to improve security and privacy
 - **Minimal permissions** now only include `activeTab` and `storage`
 - **Better extension hygiene** by following Chrome Web Store best practices
+
+### Parentheses Support (v1.3)
+
+- **Added support for `\( ... \)` delimiters** in addition to `\[ ... \]`
+- **Updated UI** to reflect support for both delimiter types
+- **Enhanced regex patterns** for both bracket and parentheses formats
+- **Improved documentation** with examples for both delimiter types
 
 ## 🐛 Issues & Support
 
