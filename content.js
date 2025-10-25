@@ -135,11 +135,11 @@ function convertTextEquations() {
 
     // First replace \( ... \) with $ ... $
     PAREN_REGEX.lastIndex = 0;
-    let updated = original.replace(PAREN_REGEX, "$$1$");
+    let updated = original.replace(PAREN_REGEX, "$$$1$$");
 
     // Then replace \[ ... \] with $ ... $
     BRACKET_REGEX.lastIndex = 0;
-    updated = updated.replace(BRACKET_REGEX, "$$1$");
+    updated = updated.replace(BRACKET_REGEX, "$$$1$$");
 
     if (updated !== original) {
       textNode.textContent = updated;
@@ -168,11 +168,11 @@ function convertSingleTextNode(textNode) {
 
   // First replace \( ... \) with $ ... $
   PAREN_REGEX.lastIndex = 0;
-  let newText = text.replace(PAREN_REGEX, "$$1$");
+  let newText = text.replace(PAREN_REGEX, "$$$1$$");
 
   // Then replace \[ ... \] with $ ... $
   BRACKET_REGEX.lastIndex = 0;
-  newText = newText.replace(BRACKET_REGEX, "$$1$");
+  newText = newText.replace(BRACKET_REGEX, "$$$1$$");
 
   if (newText === text) return;
 
