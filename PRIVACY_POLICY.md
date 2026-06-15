@@ -13,8 +13,8 @@ Notion Equation Converter ("we," "our," or "the extension") is committed to prot
 
 Our extension accesses and processes:
 
-- **Mathematical equation text** in LaTeX format (e.g., `\[equation\]`) on Notion pages
-- **Text content** only for the purpose of converting equation syntax from block format to inline format
+- **Mathematical equation text** in LaTeX format (e.g., `\[equation\]` or `\(equation\)`) on Notion pages
+- **Text content** only for the purpose of converting equation syntax from block/parenthesis formats to display/inline formats
 
 ### User Preferences
 
@@ -39,9 +39,9 @@ We do not collect, store, or transmit:
 
 ## How We Use Information
 
-The limited data we access is used solely to:
+- The limited data we access is used solely to:
 
-- Convert LaTeX equation syntax from block format (`\[ \]`) to inline format (`$ $`)
+- Convert LaTeX equation syntax from block format (`\[ \]`) to display math (`$$ $$`) and parenthesis format (`\( \)`) to inline math (`$ $`)
 - Remember your conversion preference settings
 - Provide the core functionality of equation conversion on Notion pages
 

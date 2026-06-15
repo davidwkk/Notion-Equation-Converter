@@ -1,6 +1,6 @@
 {
   "name": "Notion Equation Converter",
-  "description": "Convert LaTeX block equations \\[ eqt \\] and \\( eqt \\) to inline equations $ eqt $ in Notion pages",
+  "description": "Convert LaTeX block equations \\[ eqt \\] to display math $$ eqt $$ and \\( eqt \\) to inline math $ eqt $ in Notion pages",
   "version": "1.2.2",
   "manifest_version": 3,
   "permissions": ["activeTab", "storage"],
