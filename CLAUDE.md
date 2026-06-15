@@ -32,7 +32,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 3. Click "Load unpacked" → select project root folder
 
 # Test extension
-1. Open any Notion page (notion.so or notion.site)
+1. Open any Notion page (app.notion.com, notion.so or notion.site)
 2. Type equations with \[ ... \] syntax
 3. Click extension icon or enable auto-convert
 ```

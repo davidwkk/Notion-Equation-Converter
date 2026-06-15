@@ -8,6 +8,7 @@ A Chrome extension that converts LaTeX block equations `\[ \]` and `\( \)` to in
 - **Real-time auto-conversion** as you type
 - **Smart filtering** - ignores empty brackets `\[\]` or `\( \)` and whitespace-only patterns
 - **Works on all Notion pages** (notion.so and notion.site)
+- **Works on all Notion pages** (app.notion.com, notion.so and notion.site)
 - **Simple and lightweight** - no permissions beyond active tab
 - **Preserves equation content** - only changes the delimiters
 
@@ -79,7 +80,7 @@ $F = ma$
 
 - **Manifest Version:** 3
 - **Permissions:** `activeTab`, `storage`
-- **Content Scripts:** Runs on `*.notion.so/*` and `*.notion.site/*`
+- **Content Scripts:** Runs on `*.notion.com/*`, `*.notion.so/*` and `*.notion.site/*`
 - **Framework:** Vanilla JavaScript
 - **Regex Pattern:** `/\\\[(\s*\S[\s\S]*?)\\\]/g` and `/\\\((\s*\S[\s\S]*?)\\\)/g` - captures content with at least one non-whitespace character
 
