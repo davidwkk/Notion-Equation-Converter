@@ -1,13 +1,13 @@
 # Notion Equation Converter
 
-A Chrome extension that converts LaTeX block equations `\[ \]` and `\( \)` to inline equations (unrendered) `$ $` in Notion pages.
+A Chrome extension that converts LaTeX block equations `\[ \]` to display math `$$ $$` and `\( \)` to inline math `$ $` in Notion pages.
 
 ## 🚀 Features
 
-- **One-click conversion** of all `\[equation\]` and `\(equation\)` patterns to `$equation$`
+-- **One-click conversion** of `\[equation\]` to `$$equation$$` and `\(equation\)` to `$equation$`
 - **Real-time auto-conversion** as you type
 - **Smart filtering** - ignores empty brackets `\[\]` or `\( \)` and whitespace-only patterns
-- **Works on all Notion pages** (notion.so and notion.site)
+-- **Works on all Notion pages** (app.notion.com, notion.so and notion.site)
 - **Simple and lightweight** - no permissions beyond active tab
 - **Preserves equation content** - only changes the delimiters
 
@@ -43,12 +43,12 @@ The quadratic formula is \[x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}\]
 Einstein's famous equation is \(E = mc^2\)
 ```
 
-3. Click the extension icon in your toolbar
-4. Click "Convert \[ \] and \( \) to $ $"
-5. Your equations are now in **inline syntax**:
+4. Click the extension icon in your toolbar
+5. Click "Convert \[ \] to $$ $$ and \( \) to $ $"
+6. Your equations are now in the appropriate syntax:
 
 ```
-The quadratic formula is $x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}$
+The quadratic formula is $$x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}$$
 Einstein's famous equation is $E = mc^2$
 ```
 
@@ -79,7 +79,7 @@ $F = ma$
 
 - **Manifest Version:** 3
 - **Permissions:** `activeTab`, `storage`
-- **Content Scripts:** Runs on `*.notion.so/*` and `*.notion.site/*`
+- **Content Scripts:** Runs on `*.notion.com/*`, `*.notion.so/*` and `*.notion.site/*`
 - **Framework:** Vanilla JavaScript
 - **Regex Pattern:** `/\\\[(\s*\S[\s\S]*?)\\\]/g` and `/\\\((\s*\S[\s\S]*?)\\\)/g` - captures content with at least one non-whitespace character
 

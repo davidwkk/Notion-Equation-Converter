@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Notion Equation Converter** is a Chrome extension that converts LaTeX block equations `\[ \]` to inline equations `$ $` in Notion pages. It's a lightweight vanilla JavaScript extension with Manifest V3.
+**Notion Equation Converter** is a Chrome extension that converts LaTeX block equations `\[ \]` to display math `$$ $$` and `\( \)` to inline math `$ $` in Notion pages. It's a lightweight vanilla JavaScript extension with Manifest V3.
 
 ## Architecture
 
@@ -32,8 +32,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 3. Click "Load unpacked" → select project root folder
 
 # Test extension
-1. Open any Notion page (notion.so or notion.site)
-2. Type equations with \[ ... \] syntax
+1. Open any Notion page (app.notion.com, notion.so or notion.site)
+2. Type equations with \[ ... \] or \( ... \) syntax
 3. Click extension icon or enable auto-convert
 ```
 

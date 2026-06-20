@@ -26,7 +26,9 @@ document.addEventListener("DOMContentLoaded", function () {
       tab &&
       tab.id &&
       tab.url &&
-      (tab.url.includes("notion.so") || tab.url.includes("notion.site"))
+      (tab.url.includes("notion.so") ||
+        tab.url.includes("notion.site") ||
+        tab.url.includes("app.notion.com"))
     ) {
       chrome.tabs.sendMessage(tab.id, {
         action: "setAutoConvert",
@@ -44,7 +46,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (
         !tab.url ||
-        (!tab.url.includes("notion.so") && !tab.url.includes("notion.site"))
+        (!tab.url.includes("notion.so") &&
+          !tab.url.includes("notion.site") &&
+          !tab.url.includes("app.notion.com"))
       ) {
         showStatus("Please open a Notion page first!", "error");
         return;
