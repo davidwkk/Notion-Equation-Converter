@@ -74,25 +74,33 @@
     if (mutationObserver) { mutationObserver.disconnect(); mutationObserver = null; }
   }
   function handleMutations(mutations) {
-    if (!autoConvertEnabled || isConverting) return;
+    if (!autoConvertEnabled || isConverting) {
+      if (isConverting) console.log(`[NMQ] mutations (${mutations.length}) skipped — converting`);
+      return;
+    }
+    let added = 0;
+    let types = [];
+    for (const m of mutations) types.push(m.type);
+    console.log(`[NMQ] mutations (${types.join(",")}) — checking for equations`);
     for (const mutation of mutations) {
       if (mutation.type === "characterData") {
         const t = mutation.target.textContent;
-        if (t && hasBracketEq(t)) pendingNodes.add(mutation.target);
+        if (t && hasBracketEq(t)) { pendingNodes.add(mutation.target); added++; }
       } else if (mutation.type === "childList") {
         for (const node of mutation.addedNodes) {
           if (node.nodeType === Node.TEXT_NODE) {
-            if (node.textContent && hasBracketEq(node.textContent)) pendingNodes.add(node);
+            if (node.textContent && hasBracketEq(node.textContent)) { pendingNodes.add(node); added++; }
           } else if (node.nodeType === Node.ELEMENT_NODE) {
             const w = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
             let tn;
             while ((tn = w.nextNode()))
-              if (tn.textContent && hasBracketEq(tn.textContent)) pendingNodes.add(tn);
+              if (tn.textContent && hasBracketEq(tn.textContent)) { pendingNodes.add(tn); added++; }
           }
         }
       }
     }
     if (pendingNodes.size > 0) {
+      console.log(`[NMQ] mutations queued ${added} nodes (pending: ${pendingNodes.size})`);
       if (autoConvertTimer) clearTimeout(autoConvertTimer);
       autoConvertTimer = setTimeout(processPendingNodes, TIMING.AUTO_DEBOUNCE);
     }
@@ -100,6 +108,7 @@
 
   function processPendingNodes() {
     autoConvertTimer = null;
+    console.log(`[NMQ] auto processing ${pendingNodes.size} pending nodes`);
     for (const node of pendingNodes) {
       if (!document.contains(node)) continue;
       autoConvertNode(node);
@@ -114,6 +123,7 @@
     if (textNode.parentElement?.closest(".notion-code-block")) return;
     const updated = replaceEqText(text);
     if (updated === text) return;
+    console.log(`[NMQ] auto-convert: "${text.slice(0,60)}" → "${updated.slice(0,60)}"`);
     isConverting = true;
     textNode.textContent = updated;
     notifyInput(textNode.parentElement);
@@ -128,6 +138,7 @@
   }
 
   function convertTextEquations() {
+    console.log("[NMQ] convertTextEquations (batch text replacement)");
     let count = 0;
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     const nodes = [];
@@ -137,6 +148,7 @@
       const t = n.textContent;
       if (t && (t.includes("\\[") || t.includes("\\(") || t.includes("$"))) nodes.push(n);
     }
+    console.log(`[NMQ]   found ${nodes.length} candidate text nodes`);
     for (const node of nodes) {
       const orig = node.textContent;
       if (!orig) continue;
@@ -146,6 +158,7 @@
         return `$$${g1}$$`;
       });
       if (updated !== orig) {
+        console.log(`[NMQ]   replace: "${orig.slice(0,50)}" → "${updated.slice(0,50)}"`);
         node.textContent = updated;
         count += [...orig.matchAll(PAREN_INLINE_RE)].length
               + [...orig.matchAll(BRACKET_DISPLAY_RE)].length
@@ -153,20 +166,25 @@
         notifyInput(node.parentElement);
       }
     }
+    console.log(`[NMQ]   done, converted ${count} equation(s)`);
     return count;
   }
 
   // Manual Conversion — unified DOM-order scan with toggle handling
   async function convertMathEquations() {
-    if (isConverting) return 0;
+    if (isConverting) { console.log("[NMQ] manual convert blocked — already converting"); return 0; }
+    console.log("[NMQ] === manual convert START ===");
     isConverting = true;
     window.focus();
     await delay(TIMING.FOCUS);
     injectCSS(
       'div[role="dialog"] { opacity: 0 !important; transform: scale(0.001) !important; } ' +
       ".notion-text-action-menu { opacity: 0 !important; transform: scale(0.001) !important; pointer-events: none !important; }");
-    try { return await scanAndConvert(document.body); }
-    finally { removeStyleTag(); isConverting = false; }
+    try {
+      const c = await scanAndConvert(document.body);
+      console.log(`[NMQ] === manual convert DONE (${c} equation(s)) ===`);
+      return c;
+    } finally { removeStyleTag(); isConverting = false; }
   }
 
   async function scanAndConvert(root) {
@@ -177,7 +195,9 @@
       if (!next) break;
       if (next.type === "equation") {
         seen.add(next.node);
+        console.log(`[NMQ]   scan: found "${next.text.slice(0,40)}"`);
         if (await convertEquation(next.node, next.text)) count++;
+        else console.log(`[NMQ]   scan: conversion returned false`);
       } else {
         await processFoldedToggleInPlace(next.element);
       }
@@ -215,7 +235,8 @@
 
   async function convertEquation(node, equationText) {
     const cls = classifyEquation(equationText);
-    if (!cls) return false;
+    if (!cls) { console.log(`[NMQ]   classify returned null for "${equationText.slice(0,40)}"`); return false; }
+    console.log(`[NMQ]   convert: type=${cls.isDisplay?"display":"inline"} latex="${cls.latex.slice(0,40)}"`);
     try {
       const editableParent = findEditableParent(node);
       if (!editableParent) return false;
