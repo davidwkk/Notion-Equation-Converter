@@ -1,0 +1,96 @@
+================================================================================
+  Notion Equation Converter — Manual Test Cases
+  Copy each line into a Notion text block and run the converter (Ctrl+Alt+M)
+================================================================================
+
+── DISPLAY (BLOCK) EQUATIONS ──
+────────────────────────────────────────────────────────────────────────────────
+
+\[x^2 + y^2 = z^2\]
+
+\[E = mc^2\]
+
+\[\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}\]
+
+\[\frac{-b \pm \sqrt{b^2 - 4ac}}{2a}\]
+
+\[\sum_{i=1}^n i = \frac{n(n+1)}{2}\]
+
+\[\begin{pmatrix} a & b \\ c & d \end{pmatrix}\]
+
+\[f(x) = \begin{cases} 0 & x < 0 \\ 1 & x \ge 0 \end{cases}\]
+
+\[\lim_{x \to 0} \frac{\sin x}{x} = 1\]
+
+\[\nabla \cdot \mathbf{E} = \frac{\rho}{\epsilon_0}\]
+
+\[\mathcal{F}(\omega) = \int_{-\infty}^{\infty} f(t) e^{-i\omega t} dt\]
+
+── INLINE EQUATIONS ──  \(...\) → $$...$$ inline
+────────────────────────────────────────────────────────────────────────────────
+
+The Pythagorean theorem \(a^2 + b^2 = c^2\) is fundamental.
+
+Einstein's equation \(E = mc^2\) relates mass and energy.
+
+The golden ratio \(\phi = \frac{1 + \sqrt{5}}{2}\) appears in nature.
+
+Euler's identity \(e^{i\pi} + 1 = 0\) is beautiful.
+
+The derivative \(\frac{d}{dx}x^n = nx^{n-1}\) is the power rule.
+
+Quadratic formula \(x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}\) solves any quadratic.
+
+── DOLLAR INLINE ──  $...$ → $$...$$ inline
+────────────────────────────────────────────────────────────────────────────────
+
+The equation $y = mx + b$ is a line.
+
+Set builder notation $\{x \mid x > 0\}$ describes positive numbers.
+
+── DOLLAR DISPLAY ──  $$...$$ → $$...$$ inline (Notion auto-converts)
+────────────────────────────────────────────────────────────────────────────────
+
+$$\sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6}$$
+
+$$e^{i\pi} + 1 = 0$$
+
+── MIXED CONTENT ──  multiple equations in one block
+────────────────────────────────────────────────────────────────────────────────
+
+Pythagoras says \(a^2 + b^2 = c^2\) and the quadratic formula is \[x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}\]
+
+── EDGE CASES ──
+────────────────────────────────────────────────────────────────────────────────
+
+Empty brackets (should be ignored): \[\]
+
+Whitespace-only brackets (should be ignored): \[   \]
+
+Unclosed bracket (should be ignored): \[x^2
+
+Only opening (should be ignored): \(E = mc^2
+
+Bare dollar signs (Known bug): $5 + $3 = $8
+
+Consecutive equations: \(a\) and \(b\) and \(c\)
+
+── GREEK & SYMBOLS ──
+────────────────────────────────────────────────────────────────────────────────
+
+\[\alpha + \beta + \gamma = \delta\]
+
+\[\Omega = \{\omega_1, \omega_2, \ldots, \omega_n\}\]
+
+\(P(A \mid B) = \frac{P(B \mid A) P(A)}{P(B)}\)
+
+\[\forall \epsilon > 0, \exists \delta > 0\]
+
+================================================================================
+  HOW TO TEST
+  1. Open a Notion page in Chrome (with the extension loaded)
+  2. Paste one or more lines above into text blocks
+  3. Press Ctrl+Alt+M (or click the extension icon → Convert)
+  4. Verify: \[...\] becomes a display math block
+            $$...$$, \(...\), $...$ become inline equations
+================================================================================

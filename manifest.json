@@ -1,12 +1,19 @@
 {
   "name": "Notion Equation Converter",
-  "description": "Convert LaTeX block equations \\[ eqt \\] to display math $$ eqt $$ and \\( eqt \\) to inline math $ eqt $ in Notion pages",
-  "version": "1.2.2",
+  "description": "Convert LaTeX equations to native Notion math blocks. Supports \\[ \\], $$, \\( \\), $ delimiters, auto-convert & keyboard shortcut.",
+  "version": "2.0.0",
   "manifest_version": 3,
   "permissions": ["activeTab", "storage"],
   "content_scripts": [
     {
-      "matches": ["*://*.notion.so/*", "*://*.notion.site/*", "*://*.notion.com/*"],
+      "matches": [
+        "*://*.notion.so/*",
+        "*://*.notion.site/*",
+        "*://*.notion.com/*",
+        "*://notion.so/*",
+        "*://notion.site/*",
+        "*://notion.com/*"
+      ],
       "js": ["content.js"],
       "run_at": "document_end"
     }
